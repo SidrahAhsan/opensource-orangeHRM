@@ -87,18 +87,18 @@ export default defineConfig({
    */
   projects: [
     /** Due to different view ports in Head and Headless, created 2 projects one for head mode and the same browser for headless. */
-    {
-      name: 'chromium',
-      use: {
-        viewport: null,
-        launchOptions: {
-          args: ['--disable-web-security', '--start-maximized'],
-          // channel: 'chrome',
-          slowMo: 0,
-          headless: false,
-        },
-      },
-    },
+    // {
+    //   name: 'chromium',
+    //   use: {
+    //     viewport: null,
+    //     launchOptions: {
+    //       args: ['--disable-web-security', '--start-maximized'],
+    //       // channel: 'chrome',
+    //       slowMo: 0,
+    //       headless: false,
+    //     },
+    //   },
+    // },
 
     {
       name: 'chromiumheadless',
