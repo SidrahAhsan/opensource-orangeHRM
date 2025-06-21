@@ -33,13 +33,6 @@ import { click, fill } from 'vasu-playwright-utils';
 // Your code here
 ```
 
-## Issues and Feedback
-
-If you encounter any issues or have feedback, please [Raise an Issue](https://github.com/vasu31dev/playwright-ts-lib/issues) on GitHub.
-
-## Contributions
-
-We welcome contributions! Feel free to submit a [Pull Request](https://github.com/vasu31dev/playwright-ts-lib/pulls) on GitHub.
 
 ## License
 
