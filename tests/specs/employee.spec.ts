@@ -2,17 +2,18 @@ import { test } from '@pagesetup';
 import * as Employee from '../pages/employee';
 import * as Login from '../pages/login';
 
-test('Add new employee', async () => {
+test.beforeEach(async () => {
   await Login.navigateToTheLoginPage();
   await Login.loginWithValidCreds();
   await Employee.navigateToThePIMModule();
+});
+test('Add new employee', async () => {
   await Employee.navigateToNewEmployeePage();
   await Employee.addNewEmployee();
 });
 
-test('View employee list', async () => {
-  await Login.navigateToTheLoginPage();
-  await Login.loginWithValidCreds();
-  await Employee.navigateToThePIMModule();
-  await Employee.viewEmployeeList();
+test('Delete an Employee', async () => {
+  await Employee.SearchAnEmployee();
+  await Employee.deletePopUpUI();
+  await Employee.deleteEmployee();
 });

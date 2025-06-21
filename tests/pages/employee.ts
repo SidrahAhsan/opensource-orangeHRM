@@ -1,9 +1,10 @@
 import { getLocator, getLocatorByPlaceholder, getLocatorByRole, getLocatorByText } from '@utils/locator-utils';
 import { click, fill } from '@utils/action-utils';
-import { expectPageToHaveURL } from '@utils/assert-utils';
+import { expectElementToBeHidden, expectElementToBeVisible, expectPageToHaveURL } from '@utils/assert-utils';
 import { expect } from '@pagesetup';
 import { waitForElementToBeStable, waitForElementToBeVisible } from '@utils/element-utils';
 import { MAX_TIMEOUT } from '@constants/timeouts';
+import { newEmployeeInfo } from '@testdata/userInfo';
 
 const pimModule = () => getLocatorByText('PIM', { exact: true }).nth(0);
 const addNewEmployeeButton = () => getLocatorByRole('button', { name: ' Add ' });
@@ -19,7 +20,6 @@ const confirmPassword = () => getLocator(`//input[@type='password']`).nth(1);
 const saveButton = () => getLocatorByRole('button', { name: ' Save ' });
 const searchEmployeeIdinputField = () => getLocator(`input.oxd-input.oxd-input--active`).nth(1);
 const searchButton = () => getLocatorByRole('button', { name: ' Search ' });
-//const profileHeading = () => getLocator(`h6.oxd-text.oxd-text--h6.orangehrm-main-title`).first();
 const nationalityDropdown = () => getLocator(`div.oxd-select-text-input`).first();
 const dropdownOptionCountry = () => getLocator(`div.oxd-select-option`).filter({ hasText: 'Pakistani' });
 const dropdownOptionForMaritalStatus = () => getLocator(`div.oxd-select-option`).filter({ hasText: 'Single' });
@@ -28,9 +28,16 @@ const dateOfBirthInput = () => getLocatorByPlaceholder('yyyy-dd-mm').nth(1);
 const genderRadioButton = () => getLocator(`div.oxd-radio-wrapper`).nth(1);
 const saveButtonAfterDetails = () => getLocatorByRole('button', { name: ' Save ' }).first();
 const employeeFullNameField = () => getLocatorByPlaceholder(`First Name`);
+const employeeData = () => getLocator(`div.oxd-table-body`);
 const resultRowUserId = () => getLocator(`div.oxd-table-cell.oxd-padding-cell`).nth(1);
 const resultRowUserName = () => getLocator(`div.oxd-table-cell.oxd-padding-cell`).nth(2);
 const resultRowUserLastName = () => getLocator(`div.oxd-table-cell.oxd-padding-cell`).nth(3);
+const deleteButtonForEmployee = () => getLocator('button.oxd-icon-button.oxd-table-cell-action-space:has(.bi-trash)');
+const deletePopUp = () => getLocator(`div[role="document"]`);
+const confirmationMessage = () => getLocator(`p.oxd-text--card-title`);
+const cancelButtonOnPopup = () => getLocatorByRole('button', { name: ' No, Cancel ' });
+const confirmDeleteButton = () => getLocatorByRole('button', { name: ' Yes, Delete ' });
+const noRecordFoundText = () => getLocatorByText(`No Records Found`);
 
 export async function navigateToThePIMModule() {
   await click(pimModule());
@@ -40,15 +47,15 @@ export async function navigateToNewEmployeePage() {
   await click(addNewEmployeeButton());
   await expectPageToHaveURL('https://opensource-demo.orangehrmlive.com/web/index.php/pim/addEmployee');
 }
-export async function addNewEmployee() {
-  await fill(employeeFirstName(), 'Sidra');
-  await fill(employeeLastName(), 'ahsan');
-  await fill(employeeId(), '345');
+export async function addNewEmployee(data = newEmployeeInfo) {
+  await fill(employeeFirstName(), data.firstName);
+  await fill(employeeLastName(), data.lastName);
+  await fill(employeeId(), data.userId);
   await click(loginDetailsCheckBox());
-  await fill(userName(), 'testUser');
+  await fill(userName(), data.userName);
   await click(enableRadioButton());
-  await fill(password(), 'testPassword1');
-  await fill(confirmPassword(), 'testPassword1');
+  await fill(password(), data.password);
+  await fill(confirmPassword(), data.confirmPassword);
   await click(saveButton());
   await waitForElementToBeVisible(nationalityDropdown(), { timeout: MAX_TIMEOUT });
   //select nationality from the drop-down
@@ -63,12 +70,33 @@ export async function addNewEmployee() {
   await waitForElementToBeStable(employeeFullNameField());
 }
 
-export async function viewEmployeeList() {
+export async function SearchAnEmployee() {
   await fill(searchEmployeeIdinputField(), '345');
+  await expectElementToBeVisible(employeeData());
   await click(searchButton());
-  //await waitForElementToBeStable(resultRow(), { timeout: MAX_TIMEOUT });
-  //await expect(resultRow()).toHaveCount(1);
   await expect(resultRowUserId()).toHaveText('345');
   await expect(resultRowUserName()).toHaveText('Sidra');
   await expect(resultRowUserLastName()).toHaveText('ahsan');
+}
+
+export async function deletePopUpUI() {
+  await click(deleteButtonForEmployee());
+  await expectElementToBeVisible(deletePopUp());
+  await expectElementToBeVisible(confirmationMessage());
+  await expectElementToBeVisible(cancelButtonOnPopup());
+  await expectElementToBeVisible(confirmDeleteButton());
+}
+export async function cancelDeleteEmployee() {
+  await click(cancelButtonOnPopup());
+  await expectElementToBeHidden(deletePopUp());
+  await expect(resultRowUserId()).toHaveText('345');
+  await expect(resultRowUserName()).toHaveText('Sidra');
+  await expect(resultRowUserLastName()).toHaveText('ahsan');
+}
+
+export async function deleteEmployee() {
+  //await waitForElementToBeStable(deleteButtonForEmployee());
+  await click(confirmDeleteButton());
+  //await waitForElementToBeVisible(dataContainer());
+  await expectElementToBeVisible(noRecordFoundText(), { timeout: MAX_TIMEOUT });
 }
