@@ -22,16 +22,16 @@ To install the library, run the following command:
 ```bash
 npm install vasu-playwright-utils
 ```
-
-## Usage
-
-Here's a simple example of how you can use the library:
-
-```typescript
-import { click, fill } from 'vasu-playwright-utils';
-
-// Your code here
+##Usage
+Run all tests:
+```bash
+npx playwright test
 ```
+Run a specific test:
+```bash
+npx playwright test tests/specs/login.spec.ts
+```
+
 
 
 ## License
